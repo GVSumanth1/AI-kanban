@@ -1,0 +1,25 @@
+{
+  "name": "ai-kanban-inbox",
+  "version": "1.0.0",
+  "description": "AI-Driven Kanban Inbox using n8n, SQLite, and Next.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:init": "node scripts/initDb.js",
+    "db:seed": "node scripts/seedDb.js"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^14.0.0",
+    "sqlite3": "^5.1.6",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}
