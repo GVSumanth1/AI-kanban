@@ -20,14 +20,15 @@ export const dbOperations = {
 
       const query = `
         INSERT INTO kanban_cards (
-          id, sender_name, subject, category, next_action, deadline, 
+          id, sender_name, sender_email, subject, category, next_action, deadline, 
           ai_draft, summary_bullets, read_time, board_section, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const values = [
         id,
         payload.sender_name,
+        payload.sender_email,
         payload.subject,
         payload.category,
         payload.next_action || null,

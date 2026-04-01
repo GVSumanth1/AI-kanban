@@ -4,6 +4,7 @@ export type BoardSection = 'todo' | 'in_progress' | 'done';
 export interface KanbanCard {
   id: string;
   sender_name: string;
+  sender_email: string;
   subject: string;
   category: CardCategory;
   next_action?: string;
@@ -22,6 +23,7 @@ export interface SummaryBullets {
 
 export interface CardPayload {
   sender_name: string;
+  sender_email: string;
   subject: string;
   category: CardCategory;
   next_action?: string;

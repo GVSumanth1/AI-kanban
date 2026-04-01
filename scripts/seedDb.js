@@ -14,7 +14,8 @@ const db = new sqlite3.Database(dbPath, (err) => {
 const sampleCards = [
   {
     id: 'card_urgent_1',
-    sender_name: 'john.smith@company.com',
+    sender_name: 'John Smith',
+    sender_email: 'john.smith@company.com',
     subject: 'URGENT: Q2 Budget Review - Deadline Today',
     category: 'Urgent',
     next_action: 'Call John immediately to discuss revised budget figures',
@@ -26,7 +27,8 @@ const sampleCards = [
   },
   {
     id: 'card_urgent_2',
-    sender_name: 'sarah.davis@client.io',
+    sender_name: 'Sarah Davis',
+    sender_email: 'sarah.davis@client.io',
     subject: 'Project Milestone Review - Feedback Needed by Friday',
     category: 'Urgent',
     next_action: 'Review attached documents and provide feedback on design mockups',
@@ -38,7 +40,8 @@ const sampleCards = [
   },
   {
     id: 'card_urgent_3',
-    sender_name: 'mike.johnson@company.com',
+    sender_name: 'Mike Johnson',
+    sender_email: 'mike.johnson@company.com',
     subject: 'Critical Bug Fix - Production Issue',
     category: 'Urgent',
     next_action: 'Deploy hotfix to production and notify stakeholders',
@@ -50,7 +53,8 @@ const sampleCards = [
   },
   {
     id: 'card_info_1',
-    sender_name: 'news@techcrunch.com',
+    sender_name: 'TechCrunch News',
+    sender_email: 'news@techcrunch.com',
     subject: 'Weekly Tech Digest: AI Trends & Market Updates',
     category: 'Information',
     next_action: null,
@@ -68,7 +72,8 @@ const sampleCards = [
   },
   {
     id: 'card_info_2',
-    sender_name: 'updates@notion.so',
+    sender_name: 'Notion Updates',
+    sender_email: 'updates@notion.so',
     subject: 'Notion Updates: New Database Templates & Features',
     category: 'Information',
     next_action: null,
@@ -86,7 +91,8 @@ const sampleCards = [
   },
   {
     id: 'card_info_3',
-    sender_name: 'newsletter@productHunt.com',
+    sender_name: 'Product Hunt',
+    sender_email: 'newsletter@productHunt.com',
     subject: 'Product Hunt Daily: Top Apps & Startups',
     category: 'Information',
     next_action: null,
@@ -104,7 +110,8 @@ const sampleCards = [
   },
   {
     id: 'card_promo_1',
-    sender_name: 'marketing@amazon.com',
+    sender_name: 'Amazon Marketing',
+    sender_email: 'marketing@amazon.com',
     subject: '🎉 Special Offer: 40% Off AWS Credits - Limited Time!',
     category: 'Promotional',
     next_action: null,
@@ -116,7 +123,8 @@ const sampleCards = [
   },
   {
     id: 'card_promo_2',
-    sender_name: 'sales@slack.com',
+    sender_name: 'Slack Sales',
+    sender_email: 'sales@slack.com',
     subject: 'Exclusive Deal: Enterprise Plan + Custom Integrations Free',
     category: 'Promotional',
     next_action: null,
@@ -128,7 +136,8 @@ const sampleCards = [
   },
   {
     id: 'card_promo_3',
-    sender_name: 'offers@coursera.org',
+    sender_name: 'Coursera Offers',
+    sender_email: 'offers@coursera.org',
     subject: 'Flash Sale: Premium Courses 60% OFF - 24 Hours Only',
     category: 'Promotional',
     next_action: null,
@@ -140,7 +149,8 @@ const sampleCards = [
   },
   {
     id: 'card_done_1',
-    sender_name: 'alex.chen@company.com',
+    sender_name: 'Alex Chen',
+    sender_email: 'alex.chen@company.com',
     subject: 'Monthly Report - March Performance Summary',
     category: 'Information',
     next_action: null,
@@ -158,7 +168,8 @@ const sampleCards = [
   },
   {
     id: 'card_done_2',
-    sender_name: 'support@company.com',
+    sender_name: 'Support Team',
+    sender_email: 'support@company.com',
     subject: 'Ticket #4521: Feature Request - Implemented & Deployed',
     category: 'Urgent',
     next_action: 'Notify customer of completion',
@@ -179,9 +190,9 @@ db.serialize(() => {
   // Insert sample data
   const insertStmt = db.prepare(`
     INSERT INTO kanban_cards (
-      id, sender_name, subject, category, next_action, deadline, 
+      id, sender_name, sender_email, subject, category, next_action, deadline, 
       ai_draft, summary_bullets, read_time, board_section, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   let inserted = 0;
@@ -192,6 +203,7 @@ db.serialize(() => {
       [
         card.id,
         card.sender_name,
+        card.sender_email,
         card.subject,
         card.category,
         card.next_action,

@@ -30,6 +30,7 @@ export const DraftModal: React.FC<DraftModalProps> = ({ card, onClose, onSend, o
         <div className="modal-body">
           <div className="email-info">
             <p><strong>From:</strong> {card.sender_name}</p>
+            <p><strong>Email:</strong> {card.sender_email}</p>
             <p><strong>Subject:</strong> {card.subject}</p>
             <p><strong>Next Action:</strong> {card.next_action}</p>
             <p><strong>Deadline:</strong> {card.deadline}</p>
@@ -64,7 +65,11 @@ interface DetailsModalProps {
 }
 
 export const DetailsModal: React.FC<DetailsModalProps> = ({ card, onClose, onMarkAsRead }) => {
-  const bullets = card.summary_bullets ? JSON.parse(card.summary_bullets).bullets : [];
+  const bullets = card.summary_bullets 
+    ? typeof card.summary_bullets === 'string' 
+      ? card.summary_bullets.split(' | ').filter(b => b.trim())
+      : JSON.parse(card.summary_bullets).bullets 
+    : [];
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -77,6 +82,7 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({ card, onClose, onMar
         <div className="modal-body">
           <div className="email-info">
             <p><strong>From:</strong> {card.sender_name}</p>
+            <p><strong>Email:</strong> {card.sender_email}</p>
             <p><strong>Subject:</strong> {card.subject}</p>
             <p><strong>Read Time:</strong> {card.read_time}</p>
           </div>
@@ -136,6 +142,7 @@ export const SendModal: React.FC<SendModalProps> = ({ card, onClose, onSendEmail
         <div className="modal-body">
           <div className="email-info">
             <p><strong>To:</strong> {card.sender_name}</p>
+            <p><strong>Email:</strong> {card.sender_email}</p>
             <p><strong>Subject:</strong> {card.subject}</p>
           </div>
 

@@ -8,15 +8,22 @@ export default async function handler(
 ) {
   try {
     if (req.method === 'POST') {
-      const payload: CardPayload = req.body;
+        let payload: CardPayload = req.body;
+  
+        // Parse body if it's a string
+        if (typeof payload === 'string') {
+            payload = JSON.parse(payload);
+        }
+        
+        // console.log('Received payload for new card:', payload);
 
-      // Validate required fields
-      if (!payload.sender_name || !payload.subject || !payload.category) {
-        return res.status(400).json({ error: 'Missing required fields' });
-      }
+        // Validate required fields
+        if (!payload.sender_name || !payload.sender_email || !payload.subject || !payload.category) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
 
-      const card = await dbOperations.createCard(payload);
-      return res.status(201).json(card);
+        const card = await dbOperations.createCard(payload);
+        return res.status(201).json(card);
     }
 
     if (req.method === 'GET') {

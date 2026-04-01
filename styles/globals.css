@@ -182,6 +182,13 @@ code {
   font-weight: 500;
 }
 
+.sender-email {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
 .subject {
   font-size: 14px;
   font-weight: 600;

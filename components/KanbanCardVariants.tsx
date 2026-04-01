@@ -15,6 +15,7 @@ export const UrgentCard: React.FC<UrgentCardProps> = ({ card, onOpenDraft, onSen
       </div>
       <div className="card-body">
         <p className="sender-name">{card.sender_name}</p>
+        <p className="sender-email">{card.sender_email}</p>
         <p className="subject">{card.subject}</p>
         
         {card.board_section === 'todo' && (
@@ -73,7 +74,9 @@ export const InformationCard: React.FC<InformationCardProps> = ({
   onMarkAsRead 
 }) => {
   const bullets = card.summary_bullets 
-    ? JSON.parse(card.summary_bullets).bullets 
+    ? typeof card.summary_bullets === 'string' 
+      ? card.summary_bullets.split(' | ').filter(b => b.trim())
+      : JSON.parse(card.summary_bullets).bullets 
     : [];
 
   return (
@@ -83,6 +86,7 @@ export const InformationCard: React.FC<InformationCardProps> = ({
       </div>
       <div className="card-body">
         <p className="sender-name">{card.sender_name}</p>
+        <p className="sender-email">{card.sender_email}</p>
         <p className="subject">{card.subject}</p>
         
         {card.board_section === 'todo' && (
@@ -143,6 +147,7 @@ export const PromotionalCard: React.FC<PromotionalCardProps> = ({ card, onSkip }
       </div>
       <div className="card-body">
         <p className="sender-name">{card.sender_name}</p>
+        <p className="sender-email">{card.sender_email}</p>
         <p className="subject">{card.subject}</p>
       </div>
       

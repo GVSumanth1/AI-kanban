@@ -16,6 +16,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS kanban_cards (
       id TEXT PRIMARY KEY,
       sender_name TEXT NOT NULL,
+      sender_email TEXT NOT NULL,
       subject TEXT NOT NULL,
       category TEXT NOT NULL CHECK(category IN ('Urgent', 'Information', 'Promotional')),
       next_action TEXT,
