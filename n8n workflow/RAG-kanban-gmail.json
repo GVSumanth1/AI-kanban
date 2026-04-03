@@ -45,7 +45,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        496,
+        704,
         64
       ],
       "id": "19ee4ab7-e451-440c-bc62-ec7320ac8b8b",
@@ -66,25 +66,11 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        928,
+        1136,
         -96
       ],
       "id": "a3ae64f9-ed40-43e8-88c1-23b74b40fca1",
       "name": "AI Agent"
-    },
-    {
-      "parameters": {
-        "sessionIdType": "customKey",
-        "sessionKey": "={{$json.sender_email }}"
-      },
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
-      "position": [
-        960,
-        144
-      ],
-      "id": "e6bae49f-fb0a-40c4-9bd1-0f5993998ddc",
-      "name": "Simple Memory"
     },
     {
       "parameters": {
@@ -100,7 +86,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
       "position": [
-        1104,
+        1312,
         144
       ],
       "id": "bfa5250f-a32e-4be8-a5ed-af5680cdce93",
@@ -113,7 +99,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        1088,
+        1296,
         320
       ],
       "id": "018aab55-7145-446e-8865-46e4eedbe5d3",
@@ -272,7 +258,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1984,
+        2192,
         -96
       ],
       "id": "b51f6425-5254-4926-ad94-60a5677a89b2",
@@ -332,12 +318,12 @@
     },
     {
       "parameters": {
-        "jsCode": "const aiData = items[0].json;\n\n// Remove markdown formatting from output string\nlet outputString = aiData.output.toString();\noutputString = outputString.replace(/^```json\\s*/, '').replace(/\\s*```$/, '').replace(/\\n/g, '');\n\n// Parse the JSON\nconst parsedAI = JSON.parse(outputString);\n\n// Get classifier data\nconst classifierData = $('Text Classifier').first().json;\n\n// Clean sender info\nconst senderName = (classifierData.sender_name || '').replace(/^From:\\s*/, '').trim();\nconst senderEmail = classifierData.sender_email || 'Unknown';\nconst subject = (classifierData.subject || '').replace(/^Subject:\\s*/, '').trim();\n\n// Map classifications\nconst classificationMap = {\n  'red_urgent': 'Urgent',\n  'blue_info': 'Information',\n  'grey_ignore': 'Promotional'\n};\n\nconst classification = parsedAI.classification || 'grey_ignore';\nconst mappedCategory = classificationMap[classification] || 'Promotional';\n\n// Build final result\nconst result = {\n  json: {\n    id: `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,\n    sender_name: senderName,\n    sender_email: senderEmail,\n    subject: subject,\n    category: mappedCategory,\n    next_action: parsedAI.next_action || null,\n    deadline: parsedAI.extracted_deadline || null,\n    ai_draft: parsedAI.draft_response || null,\n    summary_bullets: Array.isArray(parsedAI.summary_bullets) ? parsedAI.summary_bullets.join(' | ') : null,\n    read_time: parsedAI.read_time || null,\n    board_section: 'todo',\n    created_at: new Date().toISOString(),\n    updated_at: new Date().toISOString()\n  }\n};\n\nreturn result;"
+        "jsCode": "const aiData = items[0].json;\n\n// Remove markdown formatting from output string\nlet outputString = aiData.output.toString();\noutputString = outputString.replace(/^```json\\s*/, '').replace(/\\s*```$/, '').replace(/\\n/g, '');\n\n// Parse the JSON\nconst parsedAI = JSON.parse(outputString);\n\n// Get classifier data\nconst classifierData = $('Code in JavaScript').first().json;\n\n// Clean sender info\nconst senderName = (classifierData.sender_name || '').replace(/^From:\\s*/, '').trim();\nconst senderEmail = classifierData.sender_email || 'Unknown';\nconst subject = (classifierData.subject || '').replace(/^Subject:\\s*/, '').trim();\n\n// Map classifications\nconst classificationMap = {\n  'red_urgent': 'Urgent',\n  'blue_info': 'Information',\n  'grey_ignore': 'Promotional'\n};\n\nconst classification = parsedAI.classification || 'grey_ignore';\nconst mappedCategory = classificationMap[classification] || 'Promotional';\n\n// Build final result\nconst result = {\n  json: {\n    id: `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,\n    sender_name: senderName,\n    sender_email: senderEmail,\n    subject: subject,\n    category: mappedCategory,\n    next_action: parsedAI.next_action || null,\n    deadline: parsedAI.extracted_deadline || null,\n    ai_draft: parsedAI.draft_response || null,\n    summary_bullets: Array.isArray(parsedAI.summary_bullets) ? parsedAI.summary_bullets.join(' | ') : null,\n    read_time: parsedAI.read_time || null,\n    board_section: 'todo',\n    created_at: new Date().toISOString(),\n    updated_at: new Date().toISOString()\n  }\n};\n\nreturn result;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1504,
+        1712,
         -96
       ],
       "id": "cf6ca27e-fc72-4eed-9d47-3dfd325106d5",
@@ -351,7 +337,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        1744,
+        1952,
         -96
       ],
       "id": "d1ede635-37c8-4460-9cf8-4ed31918c93d",
@@ -385,7 +371,7 @@
       "parameters": {
         "content": " Just: sender, subject, body \n\n-> Minimize Number of Tokens",
         "height": 464,
-        "width": 368,
+        "width": 564,
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -399,7 +385,7 @@
     },
     {
       "parameters": {
-        "inputText": "={{ $json.subject }}\n{{ $json.body }}",
+        "inputText": "={{ $node['Code in JavaScript'].json.subject }}\n{{ $node['Code in JavaScript'].json.body }}",
         "categories": {
           "categories": [
             {
@@ -413,14 +399,14 @@
           ]
         },
         "options": {
-          "systemPromptTemplate": "You are an email spam classifier. Analyze the email and classify it into one of these categories:\n\n1. SPAM: phishing attempts, suspicious links, lottery/prize claims, unsubscribe links\n\n2. NOT_SPAM: Legitimate work emails, personal emails from contacts, messages requiring your action, professional communications, account notifications from known services\n\nEmail to classify:\nSubject: {{ $json.subject }}\nBody: {{ $json.body }}\n\nClassify this email into one category. Be strict with spam detection.",
+          "systemPromptTemplate": "You are an email spam classifier. Analyze the email and classify it into one of these categories:\n\n1. SPAM: phishing attempts, suspicious links, lottery/prize claims, unsubscribe links\n\n2. NOT_SPAM: Legitimate work emails, personal emails from contacts, messages requiring your action, professional communications, account notifications from known services\n\nEmail to classify:\nSubject: {{ $node['Code in JavaScript'].json.subject }}\nBody: {{ $node['Code in JavaScript'].json.body }}\n\nClassify this email into one category. Be strict with spam detection.",
           "enableAutoFixing": true
         }
       },
       "type": "@n8n/n8n-nodes-langchain.textClassifier",
       "typeVersion": 1.1,
       "position": [
-        432,
+        640,
         -112
       ],
       "id": "59033fe2-7ef1-4dd0-be7d-56b9abd05965",
@@ -435,7 +421,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        368,
+        576,
         -336
       ],
       "id": "d213f5d8-13e6-47e0-ac23-e5511124f455",
@@ -443,12 +429,12 @@
     },
     {
       "parameters": {
-        "jsCode": "const email = items[0].json;\n\nlet senderName = '';\nlet senderEmail = '';\nconst fromHeader = email.headers?.from || email.from || '';\nconst fromMatch = fromHeader.match(/([^<]*)<([^>]*)>/);\n\nif (fromMatch) {\n  senderName = fromMatch[1].trim() || fromMatch[2];\n  senderEmail = fromMatch[2];\n} else {\n  senderEmail = fromHeader.trim();\n  senderName = senderEmail.split('@')[0];\n}\n\nlet emailBody = '';\nif (email.body) {\n  emailBody = typeof email.body === 'object' ? (email.body.plain || email.body.html || '') : email.body;\n} else if (email.bodyPlain) {\n  emailBody = email.bodyPlain;\n} else if (email.bodyHtml) {\n  emailBody = email.bodyHtml.replace(/<[^>]*>/g, '').trim();\n} else if (email.text) {\n  emailBody = email.text;\n}\n\nemailBody = emailBody.trim().slice(0, 2000).replace(/\\n\\n+/g, '\\n');\n\nconst subject = email.headers?.subject || email.subject || '(No Subject)';\n\nreturn {\n  json: {\n    sender_name: senderName,\n    sender_email: senderEmail,\n    subject: subject,\n    body: emailBody,\n    messageId: email.id || email.messageId || '',\n    date: email.headers?.date || email.date || new Date().toISOString(),\n  }\n};"
+        "jsCode": "const email = items[0].json;\n\nlet senderName = '';\nlet senderEmail = '';\n\n// Gmail sends 'from' as an object with .text property\nconst fromData = email.headers?.from;\n\nif (typeof fromData === 'object' && fromData?.text) {\n  // Use the .text property which has proper format: \"Name\" <email@example.com>\n  const fromMatch = fromData.text.match(/([^<]*)<([^>]*)>/);\n  \n  if (fromMatch) {\n    senderName = fromMatch[1].trim().replace(/^\"(.*)\"$/, '$1') || fromData.name || '';\n    senderEmail = fromMatch[2].trim();\n  } else {\n    // Fallback: use the name property\n    senderName = fromData.name || 'Unknown';\n    senderEmail = fromData.text || 'unknown@example.com';\n  }\n} else if (typeof fromData === 'string') {\n  // Fallback for string format\n  const fromMatch = fromData.match(/([^<]*)<([^>]*)>/);\n  if (fromMatch) {\n    senderName = fromMatch[1].trim();\n    senderEmail = fromMatch[2].trim();\n  } else {\n    senderEmail = fromData.trim();\n    senderName = senderEmail.split('@')[0];\n  }\n}\n\n// Remove \"From: \" prefix if present\nsenderName = senderName.replace(/^From:\\s*/, '').trim();\n\n// Get email body\nlet emailBody = '';\nif (email.bodyPlain) {\n  emailBody = email.bodyPlain;\n} else if (email.bodyHtml) {\n  emailBody = email.bodyHtml.replace(/<[^>]*>/g, '').trim();\n} else if (email.body) {\n  emailBody = typeof email.body === 'object' ? (email.body.plain || email.body.html || '') : email.body;\n} else if (email.text) {\n  emailBody = email.text;\n}\n\n// Clean up body\nemailBody = (emailBody || '')\n  .trim()\n  .slice(0, 2000)\n  .replace(/\\n\\n+/g, '\\n');\n\n// Get subject - Remove \"Subject: \" prefix if present\nlet subject = email.headers?.subject || email.subject || '(No Subject)';\nsubject = subject.replace(/^Subject:\\s*/, '').trim();\n\n// Handle encoded subject (UTF-8 Base64)\nif (subject.includes('=?UTF-8?B?')) {\n  try {\n    const parts = subject.match(/=\\?UTF-8\\?B\\?([^?]+)\\?=/g);\n    if (parts) {\n      parts.forEach(part => {\n        const base64 = part.replace(/=\\?UTF-8\\?B\\?|\\?=/g, '');\n        const decoded = Buffer.from(base64, 'base64').toString('utf-8');\n        subject = subject.replace(part, decoded);\n      });\n      subject = subject.replace(/\\s+/g, ' ').trim();\n    }\n  } catch (e) {\n    console.log('Could not decode subject, using as-is:', subject);\n  }\n}\n\n// Get message ID\nconst messageId = email.id || email.messageId || '';\n\n// Get date - Remove \"Date: \" prefix if present\nlet date = email.headers?.date || email.date || new Date().toISOString();\ndate = date.replace(/^Date:\\s*/, '').trim();\n\nreturn {\n  json: {\n    id: messageId,\n    messageId: messageId,\n    sender_name: senderName || 'Unknown',\n    sender_email: senderEmail || 'unknown@example.com',\n    subject: subject,\n    body: emailBody,\n    date: date,\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        224,
+        176,
         -112
       ],
       "id": "b2da0a51-0324-4691-8fe3-893ac32a7767",
@@ -464,7 +450,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        784,
+        992,
         -336
       ],
       "id": "771c50c0-5456-4278-8b4c-33b68a0f33f5",
@@ -480,8 +466,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1424,
-        -336
+        1584,
+        -320
       ],
       "id": "53960d45-7883-499c-9590-d2da5809159a",
       "name": "Sticky Note3"
@@ -541,7 +527,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        800,
+        1008,
         112
       ],
       "id": "c63e23af-512f-4e2b-8e29-ffdb574e0ea9",
@@ -552,6 +538,121 @@
           "name": "Google Gemini(PaLM) Api account"
         }
       }
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3000/api/processed-emails/check",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "=messageId",
+              "value": "={{ $json.messageId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        48,
+        304
+      ],
+      "id": "90366f9e-b6f9-404e-a713-780baee5a97b",
+      "name": "Check Duplicate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6d18ad79-8035-4d1b-a28b-40ce68d48130",
+              "leftValue": "={{ $json.isDuplicate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        304
+      ],
+      "id": "9c0349c3-7314-4891-a10c-037431012eaf",
+      "name": "Duplicate?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/processed-emails/record",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ $node['Code in JavaScript1'].json.id }},{{ $node['Code in JavaScript1'].json.sender_email }},{{ $node['Code in JavaScript1'].json.subject }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2496,
+        -96
+      ],
+      "id": "9a7040af-b8a1-4c2b-beaf-431130f5b65e",
+      "name": "Record processed"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sender_email }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        128
+      ],
+      "id": "1cc3d095-d19e-4a4c-ac03-ffda23854438",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  sender_email: $node['Code in JavaScript'].json.sender_email,\n  sender_name: $node['Code in JavaScript'].json.sender_name,\n  subject: $node['Code in JavaScript'].json.subject,\n  body: $node['Code in JavaScript'].json.body,\n  date: $node['Code in JavaScript'].json.date,\n  messageId: $node['Code in JavaScript'].json.messageId,\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        304
+      ],
+      "id": "d0bcc87f-d6d9-43c4-908e-b0b1b9eaaa93",
+      "name": "Code in JavaScript3"
     }
   ],
   "pinData": {},
@@ -573,17 +674,6 @@
           {
             "node": "Text Classifier",
             "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Simple Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
             "index": 0
           }
         ]
@@ -760,7 +850,7 @@
       "main": [
         [
           {
-            "node": "Text Classifier",
+            "node": "Check Duplicate",
             "type": "main",
             "index": 0
           }
@@ -777,6 +867,62 @@
           }
         ]
       ]
+    },
+    "Check Duplicate": {
+      "main": [
+        [
+          {
+            "node": "Duplicate?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - Create Card": {
+      "main": [
+        [
+          {
+            "node": "Record processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -787,7 +933,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "5478fae6-79d5-4bcc-bff1-4d264ec570ab",
+  "versionId": "d3e99170-c12a-44aa-ac3d-e7a3c6f7bce1",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "611bbdfd1427034cc96bf1c5aa4db8d661e235351862cda76dc64379792cc772"
