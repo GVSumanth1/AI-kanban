@@ -1,4 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import sqlite3 from 'sqlite3';
 import path from 'path';
 import axios from 'axios';
@@ -20,6 +22,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<SendEmailResponse>
 ) {
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

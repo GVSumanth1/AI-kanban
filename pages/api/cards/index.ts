@@ -1,4 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { dbOperations } from '@/lib/db';
 import { KanbanCard, CardPayload } from '@/types/kanban';
 
@@ -6,26 +8,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<KanbanCard | KanbanCard[] | { error: string }>
 ) {
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   try {
-    if (req.method === 'POST') {
-        let payload: CardPayload = req.body;
-  
-        // Parse body if it's a string
-        if (typeof payload === 'string') {
-            payload = JSON.parse(payload);
-        }
-        
-        // console.log('Received payload for new card:', payload);
-
-        // Validate required fields
-        if (!payload.sender_name || !payload.sender_email || !payload.subject || !payload.category) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        const card = await dbOperations.createCard(payload);
-        return res.status(201).json(card);
-    }
-
     if (req.method === 'GET') {
       const cards = await dbOperations.getAllCards();
       return res.status(200).json(cards);

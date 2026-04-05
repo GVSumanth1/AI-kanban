@@ -1,11 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { dbOperations } from '@/lib/db';
-import { KanbanCard, MoveCardPayload, UpdateCardPayload, BoardSection } from '@/types/kanban';
+import { KanbanCard } from '@/types/kanban';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<KanbanCard | { error: string }>
 ) {
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   const { id } = req.query;
 
   if (typeof id !== 'string') {
@@ -13,14 +20,6 @@ export default async function handler(
   }
 
   try {
-    if (req.method === 'GET') {
-      const card = await dbOperations.getCardById(id);
-      if (!card) {
-        return res.status(404).json({ error: 'Card not found' });
-      }
-      return res.status(200).json(card);
-    }
-
     if (req.method === 'DELETE') {
       await dbOperations.deleteCard(id);
       return res.status(200).json({ error: 'Card deleted' } as any);

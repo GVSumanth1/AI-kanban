@@ -200,4 +200,93 @@ export const dbOperations = {
       });
     });
   },
+
+  /**
+   * Create a new user from Google OAuth
+   */
+  createGoogleUser: (email: string, name: string, image: string): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const db = getDb();
+      const id = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const now = new Date().toISOString();
+
+      const query = `
+        INSERT INTO users (id, email, name, image, created_at, last_login)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
+
+      db.run(query, [id, email, name, image, now, now], (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          db.get(`SELECT * FROM users WHERE id = ?`, [id], (err, row) => {
+            db.close();
+            if (err) {
+              reject(err);
+            } else {
+              resolve(row);
+            }
+          });
+        }
+      });
+    });
+  },
+
+  /**
+   * Get user by email
+   */
+  getUserByEmail: (email: string): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const db = getDb();
+      const query = `SELECT * FROM users WHERE email = ?`;
+
+      db.get(query, [email], (err, row) => {
+        db.close();
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+  },
+
+  /**
+   * Get user by ID
+   */
+  getUserById: (id: string): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const db = getDb();
+      const query = `SELECT * FROM users WHERE id = ?`;
+
+      db.get(query, [id], (err, row) => {
+        db.close();
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+  },
+
+  /**
+   * Update last login timestamp
+   */
+  updateLastLogin: (userId: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const db = getDb();
+      const now = new Date().toISOString();
+      const query = `UPDATE users SET last_login = ? WHERE id = ?`;
+
+      db.run(query, [now, userId], (err) => {
+        db.close();
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  },
 };
