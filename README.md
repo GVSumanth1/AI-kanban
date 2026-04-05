@@ -250,45 +250,65 @@ The workflow `RAG-kanban-gmail` will be imported with all nodes and connections 
 
 ---
 
-## Step 3: Database Setup
+## Step 3: Google OAuth Setup for Web Interface
+
+### 3.1 Add Google OAuth2 to Google Cloud Project
+
+You already created OAuth 2.0 credentials in Step 1.3 for Gmail. Now we'll use the **same credential** for the web interface:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. **APIs & Services** → **Credentials**
+3. Find your **OAuth 2.0 Client ID** (Web application type)
+4. Copy: **Client ID** and **Client Secret**
+5. Ensure redirect URI includes: `http://localhost:3000/api/auth/callback/google`
+
+### 3.2 Configure .env.local
+
+The `.env.local` file has been created with the following:
+
+```env
+# Google OAuth Credentials (from Step 1.3 / Step 3.1)
+GOOGLE_CLIENT_ID=your-client-id-here.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret-here
+
+# NextAuth.js Configuration
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-generated-secret-here
+
+# n8n Webhook Security
+WEBHOOK_SECRET=your-webhook-secret-here
+```
+
+**For production**: Set `NEXTAUTH_URL` to your domain (e.g., `https://kanban.yourcompany.com`)
+
+---
+
+## Step 4: Database Setup
 
 ### 3.1 Initialize the Database
 
 ```bash
 # From project root
-npm run db:init
+node scripts/initDb.js
 ```
 
-This creates the SQLite database at `data/kanban.db` with the `kanban_cards` schema.
+This creates the SQLite database at `data/kanban.db` with all required schemas:
+- `kanban_cards` — Email classifications as Kanban cards
+- `processed_emails` — Duplicate email tracking
+- `users` — Google OAuth user profiles
 
 
 ---
 
-## Step 4: Environment Configuration
+## Step 6: Install Dependencies & Run
 
-### 4.1 Set Up .env.local
-
-The `.env.local` file is already included with webhook configuration. If you need to customize:
-
-```bash
-# n8n webhook for sending responses from UI
-N8N_WEBHOOK_URL=[]
-NEXT_PUBLIC_N8N_WEBHOOK_URL=[]
-
-
-```
-
----
-
-## Step 5: Install Dependencies & Run
-
-### 5.1 Install Node Packages
+### 6.1 Install Node Packages
 
 ```bash
 npm install
 ```
 
-### 5.2 Start the Development Server
+### 6.2 Start the Development Server
 
 ```bash
 npm run dev
@@ -296,24 +316,91 @@ npm run dev
 
 Access the Kanban board at: `http://localhost:3000`
 
-### 5.3 Verify Everything Works
+**Note**: You'll be redirected to `/login` to authenticate with your Google account first.
 
-1. **n8n Running**: Open `http://localhost:5678`
-2. **Next.js App Running**: Open `http://localhost:3000`
+### 6.3 Verify Everything Works
+
+1. **Login to Next.js App**: Open `http://localhost:3000` → Click "Sign in with Google" → Authorize
+2. **n8n Running**: Open `http://localhost:5678`
 3. **Check Workflow**: In n8n, click the workflow → **Execute** to do a test run
 4. **Send Test Email**: Send an email to your Gmail account
 5. **Monitor n8n**: You should see the email processed in n8n's execution logs
-6. **Check Kanban Board**: Go to `http://localhost:3000` - new card should appear
+6. **Check Kanban Board**: Go to `http://localhost:3000` - new card should appear in TODO column
 
 ---
 
 ## API Endpoints
 
+### Authentication
+All endpoints except `/api/webhooks/n8n` require either:
+- **Session**: NextAuth.js Google OAuth session (obtained after login at `/login`)
+- **Bearer Token**: Webhook token from n8n (`Authorization: Bearer {WEBHOOK_SECRET}`)
+
 ### Cards Management
 
-#### Create Card (from n8n)
+#### Get All Cards
 ```
-POST /api/cards
+GET /api/cards
+Authorization: Bearer {session_cookie}
+```
+
+#### Move Card Between Sections
+```
+POST /api/cards/[id]/move
+Authorization: Bearer {session_cookie}
+Content-Type: application/json
+
+{
+  "board_section": "in_progress"  // or "done"
+}
+```
+
+#### Send Email Response (via Gmail)
+```
+POST /api/cards/[id]/send
+Authorization: Bearer {session_cookie}
+Content-Type: application/json
+
+{
+  "draft": "Your response text here"
+}
+```
+
+### Email Processing
+
+#### Check if Email Already Processed (Duplicate Detection)
+```
+GET /api/processed-emails/check?messageId=xxx
+Authorization: Bearer {WEBHOOK_SECRET}  // from n8n
+```
+
+Response:
+```json
+{
+  "isDuplicate": false,
+  "record": null
+}
+```
+
+#### Record Processed Email (Audit Log)
+```
+POST /api/processed-emails/record
+Authorization: Bearer {WEBHOOK_SECRET}  // from n8n
+Content-Type: application/json
+
+{
+  "messageId": "xxx",
+  "senderEmail": "sender@example.com",
+  "subject": "Email Subject"
+}
+```
+
+### n8n Webhook (Card Creation)
+
+#### Create Card from n8n
+```
+POST /api/webhooks/n8n
+Authorization: Bearer {WEBHOOK_SECRET}
 Content-Type: application/json
 
 {
@@ -325,71 +412,8 @@ Content-Type: application/json
   "deadline": "2026-04-08",
   "ai_draft": "Based on your targets...",
   "summary_bullets": null,
-  "read_time": null
-}
-```
-
-#### Get All Cards
-```
-GET /api/cards
-```
-
-#### Get Card by ID
-```
-GET /api/cards/[id]
-```
-
-#### Update Card
-```
-PATCH /api/cards/[id]
-Content-Type: application/json
-
-{
-  "ai_draft": "Updated response draft"
-}
-```
-
-#### Move Card Between Sections
-```
-POST /api/cards/[id]/move
-Content-Type: application/json
-
-{
-  "board_section": "in_progress"  // or "done"
-}
-```
-
-#### Generate Draft Response
-```
-POST /api/cards/[id]/draft
-```
-
-#### Send Draft Response (via Gmail)
-```
-POST /api/cards/[id]/send
-Content-Type: application/json
-
-{
-  "draft": "Your response text here"
-}
-```
-
-### Email Processing
-
-#### Check if Email Already Processed
-```
-GET /api/processed-emails/check?messageId=xxx
-```
-
-#### Record Processed Email (Audit Log)
-```
-POST /api/processed-emails/record
-Content-Type: application/json
-
-{
-  "messageId": "xxx",
-  "senderEmail": "sender@example.com",
-  "subject": "Email Subject"
+  "read_time": null,
+  "message_id": "19d5356f7aa93d97"
 }
 ```
 
@@ -416,6 +440,34 @@ CREATE TABLE kanban_cards (
   updated_at TEXT NOT NULL
 )
 ```
+
+### processed_emails Table
+
+```sql
+CREATE TABLE processed_emails (
+  message_id TEXT PRIMARY KEY,
+  sender_email TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  processed_at TEXT NOT NULL
+)
+```
+
+Tracks which emails have been converted to cards. Used to prevent duplicate processing.
+
+### users Table
+
+```sql
+CREATE TABLE users (
+  id TEXT PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  name TEXT,
+  image TEXT,
+  created_at TEXT NOT NULL,
+  last_login TEXT
+)
+```
+
+Stores Google OAuth user profiles for authentication.
 
 ---
 
